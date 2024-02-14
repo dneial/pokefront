@@ -12,11 +12,11 @@ export interface Pokemon {
 
 export interface PokemonCreationInput {
   name: string;
-  imageURL: string;
+  imageURL?: string;
   hp: number;
   attack: number;
   defense: number;
   speed: number;
-  preEvolution: string | undefined;
-  evolutions: string[];
+  preEvolution?: string | undefined;
+  evolutions?: string[];
 }

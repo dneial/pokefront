@@ -47,7 +47,7 @@ const getPokemon: TypedDocumentNode<
 `);
 
 const createPokemonMutation: TypedDocumentNode<
-  { name: string },
+  { createPokemon: { name: string } },
   {
     input: PokemonCreationInput;
   }
@@ -70,15 +70,18 @@ export const fetchPokemons = async (
     const res = await client.request(getPokemonsQuery, variables);
     return res.pokemons;
   } catch (err) {
+    console.log(err);
     return [];
   }
 };
 
 export const fetchPokemon = async (name: string): Promise<Pokemon> => {
   try {
+    console.log("fetching: ", name);
     const res = await client.request(getPokemon, { name });
     return res.pokemon;
   } catch (err) {
+    console.log(err);
     return;
   }
 };
@@ -86,10 +89,13 @@ export const fetchPokemon = async (name: string): Promise<Pokemon> => {
 export const createPokemon = async (
   input: PokemonCreationInput
 ): Promise<string> => {
+  console.log(input);
+
   try {
     const res = await client.request(createPokemonMutation, { input });
-    return res.name;
+    return res.createPokemon.name;
   } catch (err) {
+    console.log(err);
     return;
   }
 };

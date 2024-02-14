@@ -4,6 +4,7 @@ import { PokemonCard } from "@/components/PokemonCard";
 import { fetchPokemons } from "@/lib/graphql";
 import { Pokemon } from "@/lib/pokemon";
 import { Flex, Input, Pagination } from "antd";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Dashboard() {
@@ -28,7 +29,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <>Create a new pokemon</>
+      <Link href={"/create"}>Create a new pokemon</Link>
       <Input
         name="name"
         accept="string"
