@@ -11,7 +11,6 @@ export default async function PokemonDetail({
 }) {
   const name = decodeURI(params.name);
   const pokemon: Pokemon = await fetchPokemon(name);
-
   return (
     <div className="items-center">
       <Card title={pokemon.name}>
@@ -20,7 +19,7 @@ export default async function PokemonDetail({
           alt={pokemon.name}
           width={500}
           height={500}
-        ></Image>
+        />
         <p>Pokemon name: {pokemon.name}</p>
         <p>HP: {pokemon.hp}</p>
         <p>Attack: {pokemon.attack}</p>
@@ -35,7 +34,7 @@ export default async function PokemonDetail({
           </Flex>
         )}
 
-        {pokemon.evolutions.length > 0 && <p>Evolutions</p>}
+        {pokemon.evolutions && <p>Evolutions</p>}
         {pokemon.evolutions &&
           pokemon.evolutions.map((p, idx) => (
             <Link href={`/pokemon/${p}`} key={idx}>
