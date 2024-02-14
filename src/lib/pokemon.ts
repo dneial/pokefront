@@ -9,3 +9,14 @@ export interface Pokemon {
   evolutions: string[];
   preEvolution: string;
 }
+
+export interface PokemonCreationInput {
+  name: string;
+  imageURL: string;
+  hp: number;
+  attack: number;
+  defense: number;
+  speed: number;
+  preEvolution: string | undefined;
+  evolutions: string[];
+}

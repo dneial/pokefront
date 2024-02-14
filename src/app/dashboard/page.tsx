@@ -1,16 +1,57 @@
+"use client";
+
+import { PokemonCard } from "@/components/PokemonCard";
 import { fetchPokemons } from "@/lib/graphql";
 import { Pokemon } from "@/lib/pokemon";
+import { Flex, Input, Pagination } from "antd";
+import { useEffect, useState } from "react";
 
-export default async function Dashboard() {
-  const pokemons: Pokemon[] = await fetchPokemons(0, 5);
-  console.log("here are the pokemon", pokemons);
+export default function Dashboard() {
+  const [pokemons, setPokemons] = useState([] as Pokemon[]);
+  const [maxPerPage, setMaxPerPage] = useState(10);
+  const [current, setCurrent] = useState(1);
+  const [nameInput, setNameInput] = useState("");
+
+  useEffect(() => {
+    const fetch = async () => {
+      const data = await fetchPokemons((current - 1) * maxPerPage, maxPerPage);
+      setPokemons(data);
+    };
+    fetch();
+  }, [current, maxPerPage]);
+
+  const onChangeHandler = (page: number, pageSize: number) => {
+    setCurrent(page);
+    setMaxPerPage(pageSize);
+    scrollTo({ top: 0 });
+  };
 
   return (
-    <>
-      <div>{"pokemons"}</div>
-      {pokemons?.map((p, idx) => (
-        <div key={idx}>{p.name}</div>
-      ))}
-    </>
+    <div>
+      <>Create a new pokemon</>
+      <Input
+        name="name"
+        accept="string"
+        onChange={(e) => setNameInput(e.target.value)}
+        placeholder="Name search"
+      ></Input>
+      <Flex wrap="wrap" gap="middle">
+        {pokemons &&
+          pokemons.map(
+            (p, idx) =>
+              p.name.toLowerCase().includes(nameInput.toLowerCase()) && (
+                <PokemonCard pokemon={p} key={idx} />
+              )
+          )}
+      </Flex>
+      <div className="flex justify-center">
+        <Pagination
+          current={current}
+          showSizeChanger
+          onChange={onChangeHandler}
+          total={900}
+        ></Pagination>
+      </div>
+    </div>
   );
 }
