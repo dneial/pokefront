@@ -21,6 +21,7 @@ const getPokemonsQuery: TypedDocumentNode<
       speed
       evolutions
       preEvolution
+      userCreated
     }
   }
 `);
@@ -42,6 +43,7 @@ const getPokemon: TypedDocumentNode<
       speed
       evolutions
       preEvolution
+      userCreated
     }
   }
 `);
@@ -55,6 +57,19 @@ const createPokemonMutation: TypedDocumentNode<
   gql`
     mutation create($input: CreatePokemonInput!) {
       createPokemon(createPokemonInput: $input) {
+        name
+      }
+    }
+  `
+);
+
+const updatePokemonMutation: TypedDocumentNode<
+  { updatePokemon: { name: string } },
+  { input: PokemonCreationInput }
+> = parse(
+  gql`
+    mutation update($in: UpdatePokemonInput!) {
+      updatePokemon(updatePokemonInput: $in) {
         name
       }
     }
@@ -94,6 +109,18 @@ export const createPokemon = async (
   try {
     const res = await client.request(createPokemonMutation, { input });
     return res.createPokemon.name;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+};
+
+export const updatePokemon = async (
+  input: PokemonCreationInput
+): Promise<string> => {
+  try {
+    const res = await client.request(updatePokemonMutation, { input });
+    return res.updatePokemon.name;
   } catch (err) {
     console.log(err);
     return;

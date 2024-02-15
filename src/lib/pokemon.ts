@@ -8,15 +8,16 @@ export interface Pokemon {
   speed: number;
   evolutions: string[];
   preEvolution: string;
+  userCreated: boolean;
 }
 
 export interface PokemonCreationInput {
   name: string;
   imageURL?: string;
-  hp: number;
-  attack: number;
-  defense: number;
-  speed: number;
+  hp?: number;
+  attack?: number;
+  defense?: number;
+  speed?: number;
   preEvolution?: string | undefined;
   evolutions?: string[];
 }
