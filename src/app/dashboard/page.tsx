@@ -1,10 +1,9 @@
 "use client";
 
 import { PokemonCard } from "@/components/PokemonCard";
-import { fetchPokemons } from "@/lib/graphql";
+import { fetchPokemons, removePokemon } from "@/lib/graphql";
 import { Pokemon } from "@/lib/pokemon";
-import { Flex, Input, Pagination } from "antd";
-import Link from "next/link";
+import { Flex, Input, Pagination, Spin } from "antd";
 import { useEffect, useState } from "react";
 
 export default function Dashboard() {
@@ -14,9 +13,10 @@ export default function Dashboard() {
   const [nameInput, setNameInput] = useState("");
 
   useEffect(() => {
-    const fetch = async () => {
-      const data = await fetchPokemons((current - 1) * maxPerPage, maxPerPage);
-      setPokemons(data);
+    const fetch = () => {
+      fetchPokemons((current - 1) * maxPerPage, maxPerPage).then((d) =>
+        setPokemons(d)
+      );
     };
     fetch();
   }, [current, maxPerPage]);
@@ -27,24 +27,35 @@ export default function Dashboard() {
     scrollTo({ top: 0 });
   };
 
+  const handleRemove = (id: string) => {
+    removePokemon(id);
+    setPokemons((ps) => ps.filter((p) => p.id !== id));
+    fetchPokemons((current - 1) * maxPerPage, maxPerPage).then((d) =>
+      setPokemons(d)
+    );
+  };
+
   return (
     <div>
-      <Link href={"/create"}>Create a new pokemon</Link>
       <Input
         name="name"
         accept="string"
         onChange={(e) => setNameInput(e.target.value)}
         placeholder="Name search"
       ></Input>
-      <Flex wrap="wrap" gap="middle">
-        {pokemons &&
-          pokemons.map(
-            (p, idx) =>
-              p.name.toLowerCase().includes(nameInput.toLowerCase()) && (
-                <PokemonCard pokemon={p} key={idx} />
-              )
-          )}
-      </Flex>
+      {pokemons ? (
+        <Flex wrap="wrap" gap="middle">
+          {pokemons &&
+            pokemons.map(
+              (p, idx) =>
+                p.name.toLowerCase().includes(nameInput.toLowerCase()) && (
+                  <PokemonCard pokemon={p} key={idx} remove={handleRemove} />
+                )
+            )}
+        </Flex>
+      ) : (
+        <Spin />
+      )}
       <div className="flex justify-center">
         <Pagination
           current={current}

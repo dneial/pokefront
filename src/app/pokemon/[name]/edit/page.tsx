@@ -1,7 +1,9 @@
 "use client";
 import PokeForm from "@/components/PokeForm";
-import { fetchPokemon } from "@/lib/graphql";
+import { fetchPokemon, updatePokemon } from "@/lib/graphql";
 import { Pokemon, PokemonCreationInput } from "@/lib/pokemon";
+import { Spin, message } from "antd";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface EditProps {
@@ -16,6 +18,15 @@ export default function EditPokemon({
 }) {
   const name = decodeURI(params.name);
   const [pokemon, setPokemon] = useState(props?.pokemon);
+  const [messageApi, contextHolder] = message.useMessage();
+  const router = useRouter();
+
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "Pokemon updated! Redirecting...",
+    });
+  };
 
   useEffect(() => {
     async function fetch() {
@@ -28,19 +39,29 @@ export default function EditPokemon({
   }, [name, pokemon]);
 
   const onFinish = async (input: PokemonCreationInput) => {
-    console.log(input);
+    const updated = await updatePokemon({ id: pokemon!.id, ...input });
+    if (updated) success();
+    router.push(`/pokemon/${input.name}`);
   };
+
   return (
-    <PokeForm
-      onFinish={onFinish}
-      values={{
-        name: pokemon?.name || name,
-        attack: pokemon?.attack,
-        hp: pokemon?.hp,
-        defense: pokemon?.defense,
-        speed: pokemon?.speed,
-        imageURL: pokemon?.imageURL,
-      }}
-    ></PokeForm>
+    <div className="inline-block">
+      {contextHolder}
+      {pokemon ? (
+        <PokeForm
+          onFinish={onFinish}
+          values={{
+            name: pokemon?.name || name,
+            attack: pokemon?.attack,
+            hp: pokemon?.hp,
+            defense: pokemon?.defense,
+            speed: pokemon?.speed,
+            imageURL: pokemon?.imageURL,
+          }}
+        ></PokeForm>
+      ) : (
+        <Spin />
+      )}
+    </div>
   );
 }

@@ -64,14 +64,23 @@ const createPokemonMutation: TypedDocumentNode<
 );
 
 const updatePokemonMutation: TypedDocumentNode<
-  { updatePokemon: { name: string } },
+  { updatePokemon: boolean },
   { input: PokemonCreationInput }
 > = parse(
   gql`
-    mutation update($in: UpdatePokemonInput!) {
-      updatePokemon(updatePokemonInput: $in) {
-        name
-      }
+    mutation update($input: UpdatePokemonInput!) {
+      updatePokemon(updatePokemonInput: $input)
+    }
+  `
+);
+
+const removePokemonMutation: TypedDocumentNode<
+  { removePokemon: boolean },
+  { id: string }
+> = parse(
+  gql`
+    mutation remove($id: String!) {
+      removePokemon(id: $id)
     }
   `
 );
@@ -104,25 +113,33 @@ export const fetchPokemon = async (name: string): Promise<Pokemon> => {
 export const createPokemon = async (
   input: PokemonCreationInput
 ): Promise<string> => {
-  console.log(input);
-
   try {
     const res = await client.request(createPokemonMutation, { input });
     return res.createPokemon.name;
   } catch (err) {
     console.log(err);
-    return;
+    return "";
   }
 };
 
 export const updatePokemon = async (
   input: PokemonCreationInput
-): Promise<string> => {
+): Promise<boolean> => {
   try {
     const res = await client.request(updatePokemonMutation, { input });
-    return res.updatePokemon.name;
+    return res.updatePokemon;
   } catch (err) {
     console.log(err);
-    return;
+    return false;
+  }
+};
+
+export const removePokemon = async (id: string): Promise<boolean> => {
+  try {
+    const res = await client.request(removePokemonMutation, { id });
+    return res.removePokemon;
+  } catch (err) {
+    console.log(err);
+    return false;
   }
 };

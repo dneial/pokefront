@@ -12,6 +12,7 @@ export interface Pokemon {
 }
 
 export interface PokemonCreationInput {
+  id?: string;
   name: string;
   imageURL?: string;
   hp?: number;

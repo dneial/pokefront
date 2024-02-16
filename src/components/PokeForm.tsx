@@ -33,7 +33,7 @@ export default function PokeForm(props: PokeFormProps) {
       <Form.Item
         name="hp"
         label="HP"
-        initialValue={values?.hp}
+        initialValue={values?.hp || 1}
         rules={[
           { required: true, message: "enter an HP value for your pokemon" },
         ]}
@@ -44,7 +44,7 @@ export default function PokeForm(props: PokeFormProps) {
       <Form.Item
         name="attack"
         label="Attack value"
-        initialValue={values?.attack}
+        initialValue={values?.attack || 1}
         rules={[
           { required: true, message: "enter an attack value for your pokemon" },
         ]}
@@ -55,7 +55,7 @@ export default function PokeForm(props: PokeFormProps) {
       <Form.Item
         name="defense"
         label="Defense value"
-        initialValue={values?.defense}
+        initialValue={values?.defense || 1}
         rules={[
           { required: true, message: "enter a defense value for your pokemon" },
         ]}
@@ -66,7 +66,7 @@ export default function PokeForm(props: PokeFormProps) {
       <Form.Item
         name="speed"
         label="Speed value"
-        initialValue={values?.defense}
+        initialValue={values?.defense || 1}
         rules={[
           { required: true, message: "enter a speed value for your pokemon" },
         ]}

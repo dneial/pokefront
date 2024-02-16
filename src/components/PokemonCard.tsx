@@ -1,7 +1,7 @@
 "use client";
 import { Pokemon } from "@/lib/pokemon";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Card } from "antd";
+import { Card, message } from "antd";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,11 +9,26 @@ import { useRouter } from "next/navigation";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
+  remove: (id: string) => void;
 }
 
 export const PokemonCard = (props: PokemonCardProps) => {
   const pokemon: Pokemon = props.pokemon;
   const router = useRouter();
+
+  const [messageApi, context] = message.useMessage();
+
+  const success = () => {
+    props.remove(pokemon.id);
+    messageApi
+      .open({
+        type: "loading",
+        content: "Removing pokemon...",
+        duration: 1.5,
+      })
+      .then(() => message.success("Pokemon removed", 1));
+  };
+
   return (
     <ErrorBoundary
       errorComponent={({ error }) => <FallBack pokemon={pokemon}></FallBack>}
@@ -30,7 +45,12 @@ export const PokemonCard = (props: PokemonCardProps) => {
               }}
             />
           ),
-          pokemon.userCreated && <DeleteOutlined key={"/delete"} />,
+          pokemon.userCreated && (
+            <>
+              {context}
+              <DeleteOutlined key={"/delete"} onClick={() => success()} />
+            </>
+          ),
         ]}
       >
         <Link href={`/pokemon/${pokemon.name}`}>
