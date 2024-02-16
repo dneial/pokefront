@@ -1,7 +1,7 @@
 "use client";
 import { Pokemon } from "@/lib/pokemon";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Card, message } from "antd";
+import { Card, Popconfirm, message } from "antd";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,20 +18,23 @@ export const PokemonCard = (props: PokemonCardProps) => {
 
   const [messageApi, context] = message.useMessage();
 
-  const success = () => {
+  const onConfirm = () => {
     props.remove(pokemon.id);
     messageApi
       .open({
         type: "loading",
         content: "Removing pokemon...",
-        duration: 1.5,
+        duration: 0.5,
       })
-      .then(() => message.success("Pokemon removed", 1));
+      .then(() => message.success("Pokemon removed", 1.5));
   };
+  const onCancel = () => {};
 
   return (
     <ErrorBoundary
-      errorComponent={({ error }) => <FallBack pokemon={pokemon}></FallBack>}
+      errorComponent={({ error }) => (
+        <FallBack pokemon={pokemon} remove={props.remove}></FallBack>
+      )}
     >
       <Card
         title={pokemon.name}
@@ -46,13 +49,19 @@ export const PokemonCard = (props: PokemonCardProps) => {
             />
           ),
           pokemon.userCreated && (
-            <>
-              {context}
-              <DeleteOutlined key={"/delete"} onClick={() => success()} />
-            </>
+            <Popconfirm
+              title="Remove this pokemon"
+              description="Are you sure you want to remove this pokemon?"
+              onConfirm={onConfirm}
+              onCancel={onCancel}
+            >
+              <DeleteOutlined key={"/delete"} />
+            </Popconfirm>
           ),
         ]}
       >
+        {context}
+
         <Link href={`/pokemon/${pokemon.name}`}>
           <Image
             src={pokemon.imageURL}

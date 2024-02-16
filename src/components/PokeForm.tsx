@@ -1,6 +1,6 @@
 "use client";
 import { PokemonCreationInput } from "@/lib/pokemon";
-import { Button, Form, Input, InputNumber } from "antd";
+import { Button, Form, Input, Slider } from "antd";
 import { useFormStatus } from "react-dom";
 
 interface PokeFormProps {
@@ -17,7 +17,7 @@ export default function PokeForm(props: PokeFormProps) {
       name="Create a pokemon"
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
-      style={{ maxWidth: 600 }}
+      style={{ maxWidth: 600, margin: 50 }}
       initialValues={{ remember: true }}
       onFinish={onFinish}
     >
@@ -38,7 +38,7 @@ export default function PokeForm(props: PokeFormProps) {
           { required: true, message: "enter an HP value for your pokemon" },
         ]}
       >
-        <InputNumber placeholder="hp"></InputNumber>
+        <Slider tooltip={{ open: true }}></Slider>
       </Form.Item>
 
       <Form.Item
@@ -49,7 +49,7 @@ export default function PokeForm(props: PokeFormProps) {
           { required: true, message: "enter an attack value for your pokemon" },
         ]}
       >
-        <InputNumber placeholder="attack"></InputNumber>
+        <Slider tooltip={{ open: true }}></Slider>
       </Form.Item>
 
       <Form.Item
@@ -60,7 +60,7 @@ export default function PokeForm(props: PokeFormProps) {
           { required: true, message: "enter a defense value for your pokemon" },
         ]}
       >
-        <InputNumber placeholder="defense"></InputNumber>
+        <Slider tooltip={{ open: true }}></Slider>
       </Form.Item>
 
       <Form.Item
@@ -71,7 +71,7 @@ export default function PokeForm(props: PokeFormProps) {
           { required: true, message: "enter a speed value for your pokemon" },
         ]}
       >
-        <InputNumber placeholder="speed"></InputNumber>
+        <Slider tooltip={{ open: true }}></Slider>
       </Form.Item>
 
       <Form.Item
@@ -79,6 +79,7 @@ export default function PokeForm(props: PokeFormProps) {
         label="Image"
         rules={[{ type: "url", warningOnly: false }]}
         initialValue={values?.imageURL}
+        tooltip={{ title: "Leave blank to use default image" }}
       >
         <Input placeholder="image url" accept="string"></Input>
       </Form.Item>

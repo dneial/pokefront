@@ -58,7 +58,7 @@ export default function EditPokemon({
             speed: pokemon?.speed,
             imageURL: pokemon?.imageURL,
           }}
-        ></PokeForm>
+        />
       ) : (
         <Spin />
       )}
