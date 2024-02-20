@@ -2,7 +2,7 @@ import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
 import { parse } from "graphql";
 import { gql } from "graphql-request";
 import { client } from "./graphql-client";
-import { Pokemon, PokemonCreationInput } from "./pokemon";
+import { Pokemon, PokemonCreationInput, PokemonType } from "./pokemon";
 
 const getPokemonsQuery: TypedDocumentNode<
   {
@@ -22,6 +22,9 @@ const getPokemonsQuery: TypedDocumentNode<
       evolutions
       preEvolution
       userCreated
+      types {
+        name
+      }
     }
   }
 `);
@@ -44,9 +47,23 @@ const getPokemon: TypedDocumentNode<
       evolutions
       preEvolution
       userCreated
+      types {
+        name
+      }
     }
   }
 `);
+
+const getTypesQuery: TypedDocumentNode<{ getAllTypes: PokemonType[] }> = parse(
+  gql`
+    query getTypes {
+      getAllTypes {
+        id
+        name
+      }
+    }
+  `
+);
 
 const createPokemonMutation: TypedDocumentNode<
   { createPokemon: { name: string } },
@@ -85,6 +102,20 @@ const removePokemonMutation: TypedDocumentNode<
   `
 );
 
+const getPokemonByType: TypedDocumentNode<
+  { pokemons: [Pokemon] },
+  { type: PokemonType }
+> = parse(
+  gql`
+    query findByType($type: PokemonType) {
+      getByType(type: $type) {
+        id
+        name
+      }
+    }
+  `
+);
+
 export const fetchPokemons = async (
   offset: number,
   limit: number
@@ -99,17 +130,14 @@ export const fetchPokemons = async (
   }
 };
 
-export const fetchPokemon = async (
-  name: string,
-  from: string
-): Promise<Pokemon> => {
+export const fetchPokemon = async (name: string): Promise<Pokemon> => {
   try {
-    console.log("fetching: ", name, " from : ", from);
     const res = await client.request(getPokemon, { name });
+    console.log(res);
     return res.pokemon;
   } catch (err) {
     console.log(err);
-    return;
+    return null;
   }
 };
 
@@ -144,5 +172,25 @@ export const removePokemon = async (id: string): Promise<boolean> => {
   } catch (err) {
     console.log(err);
     return false;
+  }
+};
+
+export const getPokemonTypes = async (): Promise<PokemonType[]> => {
+  try {
+    const res = await client.request(getTypesQuery);
+    return res.getAllTypes;
+  } catch (err) {
+    return [];
+  }
+};
+
+export const findPokemonByType = async (
+  type: PokemonType
+): Promise<Pokemon[]> => {
+  try {
+    const res = await client.request(getPokemonByType, { type });
+    return res.pokemons;
+  } catch (err) {
+    return [];
   }
 };

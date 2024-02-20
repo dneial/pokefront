@@ -1,19 +1,33 @@
 "use client";
-import { PokemonCreationInput } from "@/lib/pokemon";
+import { getPokemonTypes } from "@/lib/graphql";
+import { PokemonCreationInput, PokemonType } from "@/lib/pokemon";
 import { Button, Form, Input, Select, Slider } from "antd";
+import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 interface PokeFormProps {
   onFinish: (input: PokemonCreationInput) => void;
   values?: PokemonCreationInput;
 }
+function SelectType({ onChange }: { onChange?: () => void }) {
+  const [types, setTypes] = useState<PokemonType[]>([]);
 
-const selectBefore = (
-  <Select defaultValue="http://">
-    <Select value="http://">http://</Select>
-    <Select value="https://">https://</Select>
-  </Select>
-);
+  useEffect(() => {
+    getPokemonTypes().then((res) => setTypes(res));
+  }, []);
+
+  return (
+    types && (
+      <Select
+        mode="multiple"
+        options={types.map((t) => ({ label: t.name, value: t.id }))}
+        allowClear
+        placeholder="Select at least one type"
+        onChange={onChange}
+      />
+    )
+  );
+}
 
 export default function PokeForm(props: PokeFormProps) {
   const onFinish = props.onFinish;
@@ -83,6 +97,14 @@ export default function PokeForm(props: PokeFormProps) {
         ]}
       >
         <Slider tooltip={{ open: true }}></Slider>
+      </Form.Item>
+
+      <Form.Item
+        name="types"
+        label="Types"
+        rules={[{ required: false, message: "Choose at least one type" }]}
+      >
+        <SelectType />
       </Form.Item>
 
       <Form.Item

@@ -9,6 +9,7 @@ export interface Pokemon {
   evolutions: string[];
   preEvolution: string;
   userCreated: boolean;
+  types: [PokemonType];
 }
 
 export interface PokemonCreationInput {
@@ -21,4 +22,10 @@ export interface PokemonCreationInput {
   speed?: number;
   preEvolution?: string | undefined;
   evolutions?: string[];
+  types: number[];
+}
+
+export interface PokemonType {
+  id: number;
+  name: string;
 }

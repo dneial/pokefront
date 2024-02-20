@@ -23,15 +23,18 @@ export default function EditPokemon({
   const pathname = usePathname();
 
   const success = () => {
-    messageApi.open({
-      type: "success",
-      content: "Pokemon updated! Redirecting...",
-    });
+    messageApi
+      .open({
+        type: "loading",
+        content: "Updating pokemon...",
+        duration: 1,
+      })
+      .then(() => message.success("Pokemon updated!", 1.5));
   };
 
   useEffect(() => {
     async function fetch() {
-      const data = await fetchPokemon(name, "form");
+      const data = await fetchPokemon(name);
       setPokemon(data);
     }
     fetch();

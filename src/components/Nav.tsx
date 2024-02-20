@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation";
 export default function Nav() {
   const items: MenuProps["items"] = [
     {
-      label: <Link href={"/dashboard"}>Home</Link>,
-      key: "/dashboard",
+      label: <Link href={"/"}>Home</Link>,
+      key: "/",
       icon: <HomeOutlined />,
     },
     {
