@@ -3,7 +3,7 @@ import PokeForm from "@/components/PokeForm";
 import { fetchPokemon, updatePokemon } from "@/lib/graphql";
 import { Pokemon, PokemonCreationInput } from "@/lib/pokemon";
 import { Spin, message } from "antd";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface EditProps {
@@ -20,6 +20,7 @@ export default function EditPokemon({
   const [pokemon, setPokemon] = useState(props?.pokemon);
   const [messageApi, contextHolder] = message.useMessage();
   const router = useRouter();
+  const pathname = usePathname();
 
   const success = () => {
     messageApi.open({
@@ -30,18 +31,17 @@ export default function EditPokemon({
 
   useEffect(() => {
     async function fetch() {
-      const data = await fetchPokemon(name);
+      const data = await fetchPokemon(name, "form");
       setPokemon(data);
     }
-    if (!pokemon) {
-      fetch();
-    }
-  }, [name, pokemon]);
+    fetch();
+  }, [name]);
 
   const onFinish = async (input: PokemonCreationInput) => {
     const updated = await updatePokemon({ id: pokemon!.id, ...input });
     if (updated) success();
-    router.push(`/pokemon/${input.name}`);
+    router.replace(`/pokemon/${input.name}`);
+    router.refresh();
   };
 
   return (

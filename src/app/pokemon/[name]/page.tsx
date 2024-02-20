@@ -10,10 +10,11 @@ export default async function PokemonDetail({
   params: { name: string };
 }) {
   const name = decodeURI(params.name);
-  const pokemon: Pokemon = await fetchPokemon(name);
+  const pokemon: Pokemon = await fetchPokemon(name, "page");
+
   return (
     pokemon && (
-      <div className="items-center">
+      <div className="items-center justify-center">
         <Card title={pokemon.name}>
           <Image
             src={pokemon.imageURL}
@@ -21,6 +22,11 @@ export default async function PokemonDetail({
             width={500}
             height={500}
           />
+          <p>
+            {pokemon.userCreated && (
+              <Link href={`/pokemon/${pokemon.name}/edit`}>Edit pokemon</Link>
+            )}
+          </p>
           <p>Pokemon name: {pokemon.name}</p>
           <p>HP: {pokemon.hp}</p>
           <p>Attack: {pokemon.attack}</p>
@@ -34,7 +40,6 @@ export default async function PokemonDetail({
               </Link>
             </Flex>
           )}
-
           {pokemon.evolutions && <p>Evolutions</p>}
           {pokemon.evolutions &&
             pokemon.evolutions.map((p, idx) => (

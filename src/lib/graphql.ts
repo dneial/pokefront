@@ -99,9 +99,12 @@ export const fetchPokemons = async (
   }
 };
 
-export const fetchPokemon = async (name: string): Promise<Pokemon> => {
+export const fetchPokemon = async (
+  name: string,
+  from: string
+): Promise<Pokemon> => {
   try {
-    console.log("fetching: ", name);
+    console.log("fetching: ", name, " from : ", from);
     const res = await client.request(getPokemon, { name });
     return res.pokemon;
   } catch (err) {

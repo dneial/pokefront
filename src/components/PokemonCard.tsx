@@ -24,7 +24,7 @@ export const PokemonCard = (props: PokemonCardProps) => {
       .open({
         type: "loading",
         content: "Removing pokemon...",
-        duration: 0.5,
+        duration: 1,
       })
       .then(() => message.success("Pokemon removed", 1.5));
   };

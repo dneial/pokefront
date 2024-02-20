@@ -1,6 +1,6 @@
 "use client";
 import { PokemonCreationInput } from "@/lib/pokemon";
-import { Button, Form, Input, Slider } from "antd";
+import { Button, Form, Input, Select, Slider } from "antd";
 import { useFormStatus } from "react-dom";
 
 interface PokeFormProps {
@@ -8,10 +8,18 @@ interface PokeFormProps {
   values?: PokemonCreationInput;
 }
 
+const selectBefore = (
+  <Select defaultValue="http://">
+    <Select value="http://">http://</Select>
+    <Select value="https://">https://</Select>
+  </Select>
+);
+
 export default function PokeForm(props: PokeFormProps) {
   const onFinish = props.onFinish;
   const values = props.values;
   const { pending } = useFormStatus();
+
   return (
     <Form
       name="Create a pokemon"
@@ -24,10 +32,13 @@ export default function PokeForm(props: PokeFormProps) {
       <Form.Item
         name="name"
         label="Name"
-        rules={[{ required: true, message: "enter a name for your pokemon" }]}
+        rules={[
+          { required: true, message: "Enter a name for your pokemon" },
+          { pattern: new RegExp("^[A-Za-z]*$"), message: "Invalid name" },
+        ]}
         initialValue={values?.name || ""}
       >
-        <Input placeholder="name" accept="string"></Input>
+        <Input placeholder="name" accept="string" allowClear></Input>
       </Form.Item>
 
       <Form.Item
@@ -66,7 +77,7 @@ export default function PokeForm(props: PokeFormProps) {
       <Form.Item
         name="speed"
         label="Speed value"
-        initialValue={values?.defense || 1}
+        initialValue={values?.speed || 1}
         rules={[
           { required: true, message: "enter a speed value for your pokemon" },
         ]}
@@ -81,7 +92,7 @@ export default function PokeForm(props: PokeFormProps) {
         initialValue={values?.imageURL}
         tooltip={{ title: "Leave blank to use default image" }}
       >
-        <Input placeholder="image url" accept="string"></Input>
+        <Input placeholder="image url" accept="string" allowClear></Input>
       </Form.Item>
 
       <Form.Item>
