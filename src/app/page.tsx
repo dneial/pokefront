@@ -19,14 +19,16 @@ export default function Dashboard() {
   const [current, setCurrent] = useState(1);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [paginate, setPaginate] = useState(true);
 
   const fetch = (
     current: number,
     maxPerPage: number,
     selectedTags: string[]
   ) => {
-    if (selectedTags.length <= 0) {
-      setLoading(true);
+    setLoading(true);
+    if (selectedTags.length === 0) {
+      setPaginate(true);
       fetchPokemons((current - 1) * maxPerPage, maxPerPage).then((d) => {
         setPokemons(d);
         setLoading(false);
@@ -64,7 +66,10 @@ export default function Dashboard() {
   };
 
   const onSearch = (input?: string) => {
-    if (input) findPokemonsByName(input).then((ps) => setPokemons(ps));
+    if (input) {
+      findPokemonsByName(input).then((ps) => setPokemons(ps));
+      setPaginate(false);
+    }
   };
 
   const onClear = () => {
@@ -88,7 +93,7 @@ export default function Dashboard() {
         </Tag>
       ))}
       <Flex wrap="wrap" gap="middle">
-        {pokemons.length
+        {pokemons.length && !loading
           ? pokemons.map((p) => (
               <PokemonCard
                 pokemon={p}
@@ -102,7 +107,7 @@ export default function Dashboard() {
             ))}
       </Flex>
 
-      {selectedTags.length === 0 && (
+      {paginate && (
         <div className="flex justify-center">
           <Pagination
             current={current}
