@@ -20,7 +20,7 @@ function SelectType({ onChange }: { onChange?: () => void }) {
     types && (
       <Select
         mode="multiple"
-        options={types.map((t) => ({ label: t.name, value: t.id }))}
+        options={types.map((t) => ({ label: t.name, value: `{"id":${t.id},"name":"${t.name}"}` }))}
         allowClear
         placeholder="Select at least one type"
         onChange={onChange}

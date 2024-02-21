@@ -22,7 +22,7 @@ export interface PokemonCreationInput {
   speed?: number;
   preEvolution?: string | undefined;
   evolutions?: string[];
-  types: number[];
+  types: PokemonType[];
 }
 
 export interface PokemonType {
