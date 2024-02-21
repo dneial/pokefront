@@ -12,6 +12,14 @@ export interface Pokemon {
   types: [PokemonType];
 }
 
+export interface PartialPokemon {
+  id: string;
+  name: string;
+  imageURL: string;
+  userCreated: boolean;
+  types: [PokemonType];
+}
+
 export interface PokemonCreationInput {
   id?: string;
   name: string;
@@ -22,7 +30,7 @@ export interface PokemonCreationInput {
   speed?: number;
   preEvolution?: string | undefined;
   evolutions?: string[];
-  types: PokemonType[];
+  types: number[];
 }
 
 export interface PokemonType {

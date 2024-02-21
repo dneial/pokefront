@@ -9,9 +9,15 @@ interface PokeFormProps {
   onFinish: (input: PokemonCreationInput) => void;
   values?: PokemonCreationInput;
 }
-function SelectType({ onChange }: { onChange?: () => void }) {
+function SelectType({
+  onChange,
+  initialValues,
+}: {
+  onChange?: () => void;
+  initialValues?: number[];
+}) {
   const [types, setTypes] = useState<PokemonType[]>([]);
-
+  const [selected, setSelected] = useState(0);
   useEffect(() => {
     getPokemonTypes().then((res) => setTypes(res));
   }, []);
@@ -20,10 +26,14 @@ function SelectType({ onChange }: { onChange?: () => void }) {
     types && (
       <Select
         mode="multiple"
-        options={types.map((t) => ({ label: t.name, value: `{"id":${t.id},"name":"${t.name}"}` }))}
+        options={types.map((t) => ({
+          label: t.name,
+          value: t.id,
+        }))}
         allowClear
         placeholder="Select at least one type"
         onChange={onChange}
+        defaultValue={initialValues}
       />
     )
   );
@@ -104,7 +114,7 @@ export default function PokeForm(props: PokeFormProps) {
         label="Types"
         rules={[{ required: false, message: "Choose at least one type" }]}
       >
-        <SelectType />
+        <SelectType initialValues={values?.types} />
       </Form.Item>
 
       <Form.Item

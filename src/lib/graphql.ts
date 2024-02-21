@@ -2,11 +2,16 @@ import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
 import { parse } from "graphql";
 import { gql } from "graphql-request";
 import { client } from "./graphql-client";
-import { Pokemon, PokemonCreationInput, PokemonType } from "./pokemon";
+import {
+  PartialPokemon,
+  Pokemon,
+  PokemonCreationInput,
+  PokemonType,
+} from "./pokemon";
 
 const getPokemonsQuery: TypedDocumentNode<
   {
-    pokemons: Pokemon[];
+    pokemons: PartialPokemon[];
   },
   { offset: number; limit: number }
 > = parse(gql`
@@ -15,14 +20,9 @@ const getPokemonsQuery: TypedDocumentNode<
       id
       name
       imageURL
-      hp
-      attack
-      defense
-      speed
-      evolutions
-      preEvolution
       userCreated
       types {
+        id
         name
       }
     }
@@ -48,6 +48,7 @@ const getPokemon: TypedDocumentNode<
       preEvolution
       userCreated
       types {
+        id
         name
       }
     }
@@ -64,6 +65,48 @@ const getTypesQuery: TypedDocumentNode<{ getAllTypes: PokemonType[] }> = parse(
     }
   `
 );
+
+const getByType: TypedDocumentNode<{ getByType: PartialPokemon[] }> = parse(
+  gql`
+    query findByType($types: [String!]!) {
+      getByType(types: $types) {
+        id
+        name
+        imageURL
+        userCreated
+        types {
+          name
+        }
+      }
+    }
+  `
+);
+
+const getNames: TypedDocumentNode<{ pokemons: { name: string }[] }> = parse(gql`
+  query getPokemons {
+    pokemons {
+      name
+    }
+  }
+`);
+
+const getPokemonsByName: TypedDocumentNode<{ findbyName: PartialPokemon[] }> =
+  parse(
+    gql`
+      query getByName($name: String!) {
+        findbyName(name: $name) {
+          id
+          name
+          imageURL
+          userCreated
+          types {
+            id
+            name
+          }
+        }
+      }
+    `
+  );
 
 const createPokemonMutation: TypedDocumentNode<
   { createPokemon: { name: string } },
@@ -102,24 +145,10 @@ const removePokemonMutation: TypedDocumentNode<
   `
 );
 
-const getPokemonByType: TypedDocumentNode<
-  { pokemons: [Pokemon] },
-  { type: PokemonType }
-> = parse(
-  gql`
-    query findByType($type: PokemonType) {
-      getByType(type: $type) {
-        id
-        name
-      }
-    }
-  `
-);
-
 export const fetchPokemons = async (
   offset: number,
   limit: number
-): Promise<Pokemon[]> => {
+): Promise<PartialPokemon[]> => {
   const variables = { offset, limit };
   try {
     const res = await client.request(getPokemonsQuery, variables);
@@ -133,7 +162,6 @@ export const fetchPokemons = async (
 export const fetchPokemon = async (name: string): Promise<Pokemon> => {
   try {
     const res = await client.request(getPokemon, { name });
-    console.log(res);
     return res.pokemon;
   } catch (err) {
     console.log(err);
@@ -185,11 +213,33 @@ export const getPokemonTypes = async (): Promise<PokemonType[]> => {
 };
 
 export const findPokemonByType = async (
-  type: PokemonType
-): Promise<Pokemon[]> => {
+  types: string[]
+): Promise<PartialPokemon[]> => {
   try {
-    const res = await client.request(getPokemonByType, { type });
-    return res.pokemons;
+    const res = await client.request(getByType, { types });
+    return res.getByType;
+  } catch (err) {
+    return [];
+  }
+};
+
+export const getAllNames = async (): Promise<string[]> => {
+  try {
+    const res = await client.request(getNames);
+    return res.pokemons.map((names) => names.name);
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
+};
+
+export const findPokemonsByName = async (
+  name: string
+): Promise<PartialPokemon[]> => {
+  try {
+    const res = await client.request(getPokemonsByName, { name });
+    console.log(res);
+    return res.findbyName;
   } catch (err) {
     return [];
   }
